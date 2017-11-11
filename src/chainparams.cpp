@@ -147,7 +147,8 @@ public:
         vFixedSeeds.clear();
       	vSeeds.clear();
 
-        vSeeds.push_back(CDNSSeedData("188.166.173.73", "139.59.165.143"));
+        vSeeds.push_back(CDNSSeedData("139.59.165.143", "139.59.165.143"));
+        vSeeds.push_back(CDNSSeedData("188.166.173.73", "188.166.173.73"));
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
 
