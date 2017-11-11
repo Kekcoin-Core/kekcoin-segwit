@@ -1,0 +1,22 @@
+[Unit]
+Description=KekCoin's distributed currency daemon
+After=network.target
+
+[Service]
+User=kekcoin
+Group=kekcoin
+
+Type=forking
+PIDFile=/var/lib/kekcoind/kekcoind.pid
+ExecStart=/usr/bin/kekcoind -daemon -pid=/var/lib/kekcoind/kekcoind.pid \
+-conf=/etc/kekcoin/kekcoin.conf -datadir=/var/lib/kekcoind -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

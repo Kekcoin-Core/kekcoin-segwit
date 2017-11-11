@@ -1,0 +1,5 @@
+Building KekCoin
+
+See doc/build-*.md for instructions on building kekcoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of KekCoin.

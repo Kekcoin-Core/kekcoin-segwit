@@ -1,0 +1,8 @@
+/usr/bin/kekcoin-cli		--	gen_context(system_u:object_r:kekcoin_exec_t,s0)
+/usr/sbin/kekcoind		--	gen_context(system_u:object_r:kekcoin_exec_t,s0)
+/usr/lib(64)?/kekcoin/kekcoind		--	gen_context(system_u:object_r:kekcoin_exec_t,s0)
+
+/etc/kekcoin(/.*)?		gen_context(system_u:object_r:kekcoin_conf_t,s0)
+/var/lib/kekcoin(/.*)?		gen_context(system_u:object_r:kekcoin_var_lib_t,s0)
+
+(/var)?/run/kekcoind(/.*)?   gen_context(system_u:object_r:kekcoin_var_run_t,s0)

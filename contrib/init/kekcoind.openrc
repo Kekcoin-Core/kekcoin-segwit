@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/kekcoin/.kekcoin" ]; then
+	KEKCOIND_DEFAULT_DATADIR="/var/lib/kekcoin/.kekcoin"
+else
+	KEKCOIND_DEFAULT_DATADIR="/var/lib/kekcoind"
+fi
+
+KEKCOIND_CONFIGFILE=${KEKCOIND_CONFIGFILE:-/etc/kekcoin/kekcoin.conf}
+KEKCOIND_PIDDIR=${KEKCOIND_PIDDIR:-/var/run/kekcoind}
+KEKCOIND_PIDFILE=${KEKCOIND_PIDFILE:-${KEKCOIND_PIDDIR}/kekcoind.pid}
+KEKCOIND_DATADIR=${KEKCOIND_DATADIR:-${KEKCOIND_DEFAULT_DATADIR}}
+KEKCOIND_USER=${KEKCOIND_USER:-${KEKCOIN_USER:-kekcoin}}
+KEKCOIND_GROUP=${KEKCOIND_GROUP:-kekcoin}
+KEKCOIND_BIN=${KEKCOIND_BIN:-/usr/bin/kekcoind}
+KEKCOIND_NICE=${KEKCOIND_NICE:-${NICELEVEL:-0}}
+KEKCOIND_OPTS="${KEKCOIND_OPTS:-${KEKCOIN_OPTS}}"
+
+name="KekCoin Core Daemon"
+description="KekCoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/kekcoind"
+command_args="-pid=\"${KEKCOIND_PIDFILE}\" \
+		-conf=\"${KEKCOIND_CONFIGFILE}\" \
+		-datadir=\"${KEKCOIND_DATADIR}\" \
+		-daemon \
+		${KEKCOIND_OPTS}"
+
+required_files="${KEKCOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${KEKCOIND_USER} \
+			-N ${KEKCOIND_NICE} -w 2000"
+pidfile="${KEKCOIND_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${KEKCOIND_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${KEKCOIND_USER}:${KEKCOIND_GROUP}" \
+	"${KEKCOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${KEKCOIND_USER}:${KEKCOIND_GROUP}" \
+	"${KEKCOIND_PIDDIR}"
+
+	checkpath -f \
+	-o ${KEKCOIND_USER}:${KEKCOIND_GROUP} \
+	-m 0660 \
+	${KEKCOIND_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${KEKCOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run kekcoind."
+		eerror "The setting must appear in ${KEKCOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"KekCoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

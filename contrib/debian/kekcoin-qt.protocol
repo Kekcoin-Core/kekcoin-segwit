@@ -1,0 +1,11 @@
+[Protocol]
+exec=kekcoin-qt '%u'
+protocol=kekcoin
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
