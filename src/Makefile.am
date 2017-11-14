@@ -231,7 +231,7 @@ libkekcoin_wallet_a_SOURCES = \
   $(KEKCOIN_CORE_H)
 
 # crypto primitives library
-crypto_libkekcoin_crypto_a_CPPFLAGS = $(AM_CPPFLAGS) $(KEKCOIN_CONFIG_INCLUDES)
+crypto_libkekcoin_crypto_a_CPPFLAGS = $(AM_CPPFLAGS) $(KEKCOIN_CONFIG_INCLUDES) $(SSL_CFLAGS)
 crypto_libkekcoin_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libkekcoin_crypto_a_SOURCES = \
   crypto/aes.cpp \
@@ -243,6 +243,8 @@ crypto_libkekcoin_crypto_a_SOURCES = \
   crypto/hmac_sha512.h \
   crypto/ripemd160.cpp \
   crypto/ripemd160.h \
+  crypto/scrypt.cpp \
+  crypto/scrypt.h \
   crypto/sha1.cpp \
   crypto/sha1.h \
   crypto/sha256.cpp \
@@ -447,8 +449,8 @@ if GLIBC_BACK_COMPAT
 endif
 
 libkekcoinconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
-libkekcoinconsensus_la_LIBADD = $(LIBSECP256K1)
-libkekcoinconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_KEKCOIN_INTERNAL
+libkekcoinconsensus_la_LIBADD = $(LIBSECP256K1) $(CRYPTO_LIBS)
+libkekcoinconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_KEKCOIN_INTERNAL $(SSL_CFLAGS)
 libkekcoinconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
