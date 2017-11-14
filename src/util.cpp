@@ -467,7 +467,7 @@ boost::filesystem::path GetDefaultDataDir()
     // Unix: ~/.kekcoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "KekCoin4";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "KekCoin";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -477,10 +477,10 @@ boost::filesystem::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/KekCoin4";
+    return pathRet / "Library/Application Support/KekCoin";
 #else
     // Unix
-    return pathRet / ".kekcoin4";
+    return pathRet / ".kekcoin";
 #endif
 #endif
 }
