@@ -1091,7 +1091,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     } // (!fDisableWallet)
 #endif // ENABLE_WALLET
     // ********************************************************* Step 6: network initialization
-
+    
     RegisterNodeSignals(GetNodeSignals());
 
     // sanitize comments per BIP-0014, format user agent and check total size
@@ -1234,6 +1234,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     {
         boost::filesystem::create_directories(blocksDir);
         bool linked = false;
+
         for (unsigned int i = 1; i < 10000; i++) {
             boost::filesystem::path source = GetDataDir() / strprintf("blk%04u.dat", i);
             if (!boost::filesystem::exists(source)) break;

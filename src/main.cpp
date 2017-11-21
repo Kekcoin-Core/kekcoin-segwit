@@ -1797,7 +1797,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
     CAmount nSubsidy = 0 * COIN;
 
-    if (pindexBest->nHeight+1 >= 1 && pindexBest->nHeight+1 <= 100)
+    if (nHeight+1 >= 1 && nHeight <= 100)
     {
         CAmount nSubsidy = 100000 * COIN;
         return nSubsidy;
@@ -3912,13 +3912,13 @@ static bool CheckIndexAgainstCheckpoint(const CBlockIndex* pindexPrev, CValidati
 bool IsWitnessEnabled(const CBlockIndex* pindexPrev, const Consensus::Params& params)
 {
     LOCK(cs_main);
-    return true; //(VersionBitsState(pindexPrev, params, Consensus::DEPLOYMENT_SEGWIT, versionbitscache) == THRESHOLD_ACTIVE);
+    return false; //(VersionBitsState(pindexPrev, params, Consensus::DEPLOYMENT_SEGWIT, versionbitscache) == THRESHOLD_ACTIVE);
 }
 
 bool IsWitnessLocked(const CBlockIndex* pindexPrev, const Consensus::Params& params)
 {
     LOCK(cs_main);
-    return true; //(VersionBitsState(pindexPrev, params, Consensus::DEPLOYMENT_SEGWIT, versionbitscache) == THRESHOLD_LOCKED_IN);
+    return false; //(VersionBitsState(pindexPrev, params, Consensus::DEPLOYMENT_SEGWIT, versionbitscache) == THRESHOLD_LOCKED_IN);
 }
 
 // Compute at which vout of the block's coinbase transaction the witness
@@ -5452,7 +5452,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         uint64_t nServiceInt;
         vRecv >> pfrom->nVersion >> nServiceInt >> nTime >> addrMe;
 
-        if(pfrom->nVersion < 70015)
+        if(pfrom->nVersion < 60019)
         {
             pfrom->PushMessage(NetMsgType::REJECT, strCommand, REJECT_DUPLICATE, string("You are using an old version of KekCoin, please update."));
             LOCK(cs_main);
@@ -5607,6 +5607,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     else if (strCommand == NetMsgType::VERACK)
     {
+
         pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
 
         // Mark this node as currently connected, so we update its timestamp later.
@@ -5615,11 +5616,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             State(pfrom->GetId())->fCurrentlyConnected = true;
         }
 
-        if (pfrom->nVersion >= SENDHEADERS_VERSION) {
+        if (pfrom->nVersion >=SENDHEADERS_VERSION) {
             // Tell our peer we prefer to receive headers rather than inv's
             // We send this to non-NODE NETWORK peers as well, because even
             // non-NODE NETWORK peers can announce blocks (such as pruning
             // nodes)
+
             pfrom->PushMessage(NetMsgType::SENDHEADERS);
         }
         if (pfrom->nVersion >= SHORT_IDS_BLOCKS_VERSION) {
@@ -6692,8 +6694,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         // Ignore unknown commands for extensibility
         LogPrint("net", "Unknown command \"%s\" from peer=%d\n", SanitizeString(strCommand), pfrom->id);
     }
-
-
 
     return true;
 }
