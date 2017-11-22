@@ -134,7 +134,7 @@ int64_t GetStakeCombineThreshold = 500 * COIN;
 int64_t GetStakeSplitThreshold = 2 * GetStakeCombineThreshold;
 
 arith_uint256 bnProofOfStakeLimit(~arith_uint256() >> 20);
-arith_uint256 bnProofOfStakeLimitV2(~arith_uint256() >> 20);
+arith_uint256 bnProofOfStakeLimitV2(~arith_uint256() >> 48);
 
 const int DAILY_BLOCKCOUNT =  1440; // (24 * 60 * 60) / Blocktime
 unsigned int nStakeMinAge = 60 * 60 * 8;	// minimum for coin age: 8 hours
@@ -7391,13 +7391,13 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
         return bnTargetLimit.GetCompact(); // second block
 
     int64_t nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
-
-    if (nActualSpacing < 0)
-        nActualSpacing = nTargetSpacing;
+    if (nActualSpacing > nTargetSpacing * 10)
+        nActualSpacing = nTargetSpacing * 10;
 
     // ppcoin: target change every block
     // ppcoin: retarget with exponential moving toward target spacing
     CBigNum bnNew;
+
     bnNew.SetCompact(pindexPrev->nBits);
 
     CBigNum nInterval = (nTargetTimespan) / (nTargetSpacing);

@@ -529,7 +529,7 @@ bool ResetBlockFailureFlags(CBlockIndex *pindex);
 
 // KEKCoin
 
-inline unsigned int GetTargetSpacing(int nHeight) { return 30; }
+inline unsigned int GetTargetSpacing(int nHeight) { return 60; }
 
 void ThreadStakeMiner(CWallet *pwallet);
 
