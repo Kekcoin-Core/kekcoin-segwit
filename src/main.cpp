@@ -137,6 +137,7 @@ arith_uint256 bnProofOfStakeLimit(~arith_uint256() >> 20);
 arith_uint256 bnProofOfStakeLimitV2(~arith_uint256() >> 48);
 
 const int DAILY_BLOCKCOUNT =  1440; // (24 * 60 * 60) / Blocktime
+int nStakeMinConfirmations = 66;
 unsigned int nStakeMinAge = 60 * 60 * 8;	// minimum for coin age: 8 hours
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 
@@ -2050,8 +2051,11 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
                 if (nSpendHeight - coins->nHeight < COINBASE_MATURITY && nSpendHeight - coins->nHeight > 0)
                     return state.Invalid(false,
                         REJECT_INVALID, "bad-txns-premature-spend-of-coinbase",
-                        strprintf("tried to spend %s at depth %d", coins->IsCoinBase() ?"coinbase":"coinstake",nSpendHeight - coins->nHeight));
+                        strprintf("tried to spend %s at depth %d", coins->IsCoinBase() ?"coinbase":"coinstake", nSpendHeight - coins->nHeight));
             }
+
+	    if (coins->vout[prevout.n].IsEmpty())
+		return state.DoS(100,false, REJECT_INVALID, "bad-txns-specialmarker");
 
             // Check for negative or overflow input values
             nValueIn += coins->vout[prevout.n].nValue;
@@ -2582,6 +2586,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         return state.DoS(1, error("ContextualCheckBlock() : ComputeNextStakeModifier() failed"), REJECT_INVALID, "bad-stake-modifier");
 
     pindex->SetStakeModifier(nStakeModifier, fGeneratedStakeModifier);
+    pindex->bnStakeModifierV2 = ComputeStakeModifierV2(pindex->pprev, block.IsProofOfWork() ? block.GetHash() : block.vtx[1].vin[0].prevout.hash);
 
     // Flag the block index so we can be sure it will be saved on disk
     if (!pindex->IsValid(BLOCK_VALID_STAKE))
@@ -7410,6 +7415,7 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
     return bnNew.GetCompact();
 }
 
+
 arith_uint256 GetProofOfStakeLimit(int nHeight)
 {
     return (bnProofOfStakeLimitV2);
@@ -7438,10 +7444,18 @@ bool TransactionGetCoinAge(CTransaction& transaction, uint64_t& nCoinAge)
         if (mapBlockIndex.count(hashBlock) == 0)
             return false; //Block not found
 
-        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+        //CCoinsViewCache inputs(pcoinsTip);
+        //const COutPoint &prevout = txPrev.vin[0].prevout;
+        //const CCoins* coins = inputs.AccessCoins(prevout.hash);
+        //assert(coins);
 
-        if (pblockindex->nTime + nStakeMinAge > transaction.nTime)
-            continue; // only count coins meeting min age requirement
+        //int nSpendHeight = GetSpendHeight(inputs);
+
+        //if (nSpendHeight - coins->nHeight < nStakeMinConfirmations - 1  && nSpendHeight - coins->nHeight > 0)
+        //  {
+        //   LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
+        //    continue;
+        // }
 
         int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
         bnCentSecond += CBigNum(nValueIn) * (transaction.nTime-txPrev.nTime) / CENT;
@@ -7648,6 +7662,15 @@ bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64_t& nStakeMod
     return true;
 }
 
+uint256 ComputeStakeModifierV2(const CBlockIndex* pindexPrev, const uint256& kernel)
+{
+    if (!pindexPrev)
+        return uint256();  // genesis block's modifier is 0
+
+    CDataStream ss(SER_GETHASH, 0);
+    ss << kernel << pindexPrev->bnStakeModifierV2;
+    return Hash(ss.begin(), ss.end());
+}
 
 static bool CheckStakeKernelHashV2(CBlockIndex* pindexPrev, unsigned int nBits, unsigned int nTimeBlockFrom, const CTransaction& txPrev, const COutPoint& prevout, unsigned int nTimeTx, arith_uint256& hashProofOfStake, arith_uint256& targetProofOfStake, bool fPrintProofOfStake)
 {
@@ -7655,9 +7678,6 @@ static bool CheckStakeKernelHashV2(CBlockIndex* pindexPrev, unsigned int nBits, 
     if (nTimeTx < txPrev.nTime)  // Transaction timestamp violation
         return error("CheckStakeKernelHash() : nTime violation");
 
-
-    if (nTimeBlockFrom + nStakeMinAge > nTimeTx) // Min age requirement
-        return error("CheckStakeKernelHash() : min age violation");
 
     // Base target
     CBigNum bnTarget;
@@ -7671,12 +7691,13 @@ static bool CheckStakeKernelHashV2(CBlockIndex* pindexPrev, unsigned int nBits, 
     targetProofOfStake = UintToArith256(bnTarget.getuint256());
 
     uint64_t nStakeModifier = pindexPrev->nStakeModifier;
+    uint256 bnStakeModifierV2 = pindexPrev->bnStakeModifierV2;
     int nStakeModifierHeight = pindexPrev->nHeight;
     int64_t nStakeModifierTime = pindexPrev->nTime;
 
     // Calculate hash
     CDataStream ss(SER_GETHASH, 0);
-    ss << nStakeModifier << nTimeBlockFrom << txPrev.nTime << prevout.hash << prevout.n << nTimeTx;
+    ss << bnStakeModifierV2 << txPrev.nTime << prevout.hash << prevout.n << nTimeTx;
     hashProofOfStake = UintToArith256(Hash(ss.begin(), ss.end()));
 
     if (fPrintProofOfStake)
@@ -7737,6 +7758,10 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
 
     CCoinsViewCache inputs(pcoinsTip);
 
+    const COutPoint &prevout = tx.vin[0].prevout;
+    const CCoins* coins = inputs.AccessCoins(prevout.hash);
+    assert(coins);
+
     if(fCHeckSignature)
     {
 
@@ -7753,6 +7778,11 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
             return error("CheckProofOfStake() : script-verify-failed %s",ScriptErrorString(check.GetScriptError()));
 
     }
+
+    // Verify depth
+    int nSpendHeight = GetSpendHeight(inputs);
+    if (nSpendHeight - coins->nHeight < nStakeMinConfirmations - 1  && nSpendHeight - coins->nHeight > 0)
+	return error("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
 
     if (mapBlockIndex.count(hashBlock) == 0)
         return fDebug? error("CheckProofOfStake() : read block failed") : false; // unable to read block of previous transaction
@@ -7795,11 +7825,23 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
 
     CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
 
-    if (pblockindex->GetBlockTime() + nStakeMinAge > nTime){
-        LogPrintf("CheckKernel : CreateCoinStake selected coins which do not meet min age requirement.\n");
+    // if (pblockindex->GetBlockTime() + nStakeMinAge > nTime){
+    //   LogPrintf("CheckKernel : CreateCoinStake selected coins which do not meet min age requirement.\n");
+    //     return false;
+    //}
+
+    //Stake minimum age requirement replaced with depth requirement:    
+    CCoinsViewCache inputs(pcoinsTip);
+    const CCoins* coins = inputs.AccessCoins(prevout.hash);
+    assert(coins);
+
+    int nSpendHeight = GetSpendHeight(inputs);
+
+    if (nSpendHeight - coins->nHeight < nStakeMinConfirmations - 1  && nSpendHeight - coins->nHeight > 0)
+    {
+	LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
         return false;
     }
-
     if (pBlockTime)
         *pBlockTime = pblockindex->GetBlockTime();
 

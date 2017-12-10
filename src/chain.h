@@ -217,6 +217,7 @@ public:
     unsigned int nFlags;  // ppcoin: block index flags
 
     uint64_t nStakeModifier; // hash modifier for proof-of-stake
+    uint256 bnStakeModifierV2;
 
     // proof-of-stake specific fields
     COutPoint prevoutStake;
@@ -245,6 +246,7 @@ public:
         nMoneySupply = 0;
         nFlags = 0;
         nStakeModifier = 0;
+        bnStakeModifierV2 = uint256();
 	      hashProof = arith_uint256();
         prevoutStake.SetNull();
         nStakeTime = 0;
@@ -496,6 +498,7 @@ public:
             READWRITE(VARINT(nUndoPos));
         READWRITE(nFlags);
         READWRITE(nStakeModifier);
+	READWRITE(bnStakeModifierV2);
         if (IsProofOfStake())
         {
             READWRITE(prevoutStake);

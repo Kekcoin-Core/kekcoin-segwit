@@ -277,6 +277,7 @@ bool SendMessages(CNode* pto);
 void ThreadScriptCheck();
 /** Check whether we are doing an initial block download (synchronizing from disk or network) */
 bool IsInitialBlockDownload();
+
 /** Format a string that describes several potential problems detected by the core.
  * strFor can have three values:
  * - "rpc": get critical warnings, which should put the client in safe mode if non-empty
@@ -584,6 +585,7 @@ static const int MODIFIER_INTERVAL_RATIO = 3;
 
 // Compute the hash modifier for proof-of-stake
 bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64_t& nStakeModifier, bool& fGeneratedStakeModifier);
+uint256 ComputeStakeModifierV2(const CBlockIndex* pindexPrev, const uint256& kernel);
 
 // Check whether stake kernel meets hash target
 // Sets hashProofOfStake on success return
