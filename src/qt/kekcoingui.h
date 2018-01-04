@@ -145,8 +145,6 @@ private:
 
     const PlatformStyle *platformStyle;
 
-    QAction *toggleStakingAction;
-
     /** Create the main UI actions. */
     void createActions();
     /** Create the menu bar and sub-menus. */
@@ -232,7 +230,6 @@ private Q_SLOTS:
     void repairWallet();
 
 #endif // ENABLE_WALLET
-    void toggleStaking();
     /** Show configuration dialog */
     void optionsClicked();
     /** Show about dialog */
