@@ -115,9 +115,6 @@ public:
         bnProofOfWorkLimit = arith_uint256(~arith_uint256() >> 20);
 
         genesis = CreateGenesisBlock(1498944188, 922517, 0x1e0fffff, 1, 0 * COIN);
-
-        uint256 hashGenesisBlock = uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949");
-
         consensus.hashGenesisBlock = genesis.GetHash();
 
         assert(consensus.hashGenesisBlock == uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949"));
@@ -200,8 +197,6 @@ public:
         genesis = CreateGenesisBlock(1498944188, 18717, 0x1e0fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 hashGenesisBlock = uint256S("0x0000c7b67a057053c5043fad3ae7896f3d3172361ba4a850abb24f6dd80df5dc");
-
         vFixedSeeds.clear();
         vSeeds.clear();
 
@@ -268,11 +263,6 @@ public:
 
         genesis = CreateGenesisBlock(1411111111, 0, 0x1e0fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-
-	// Need to be reviewed
-
-        //assert(consensus.hashGenesisBlock == uint256S("0x0000000013cb675cc890cf8c7a22f1f3948684b297ccd2553d6e203e00198ae0"));
-        //assert(genesis.hashMerkleRoot == uint256S("0x3c71675ea78d84a0aafd2ec31a82745cd7c2844b6f77616a7f36134f0fd3e30b"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();      //!< Regtest mode doesn't have any DNS seeds.
