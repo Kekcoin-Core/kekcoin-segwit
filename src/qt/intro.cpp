@@ -11,7 +11,6 @@
 #include "skinize.h"
 
 #include "guiutil.h"
-#include "navtechinit.h"
 
 #include "util.h"
 

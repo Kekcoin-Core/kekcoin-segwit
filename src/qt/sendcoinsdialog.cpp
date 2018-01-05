@@ -248,12 +248,13 @@ void SendCoinsDialog::on_sendButton_clicked()
 
     CAmount txFee = currentTransaction.getTransactionFee();
 
+    QString questionString = tr("Are you sure you want to send?");
     // Format confirmation message
     QStringList formatted;
     const SendCoinsRecipient &rcp = currentTransaction.recipients.first();
     {
         // generate bold amount string
-        QString amount = "<b>" + KekCoinUnits::formatHtmlWithUnit(model->getOptionsModel()->getDisplayUnit(), nTotalAmount);
+        QString amount = "<b>" + KekCoinUnits::formatHtmlWithUnit(model->getOptionsModel()->getDisplayUnit(), rcp.amount);
         amount.append("</b>");
         // generate monospace address string
         QString address = "<span style='font-family: monospace;'>" + rcp.address;
