@@ -43,11 +43,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
     std::map<std::string, std::string> mapValue = wtx.mapValue;
     std::string dzeel = "";
 
-    if (!wtx.fAnon)
-  	{
-  	    dzeel = wtx.strDZeel;
-  	}
-
     if (nNet > 0 || wtx.IsCoinBase() || wtx.IsCoinStake())
     {
         //
