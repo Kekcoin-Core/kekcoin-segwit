@@ -55,8 +55,8 @@ static CBlock CreateGenesisBlockTestnet(const char* pszTimestamp, const CScript&
 
     CBlock genesis;
     genesis.nTime    = 1498944188;
-    genesis.nBits    = 0x1e0fffff;
-    genesis.nNonce   = 922517;
+    genesis.nBits    = 0x1f00ffff;
+    genesis.nNonce   = 18717;
     genesis.nVersion = 1;
     genesis.vtx.push_back(txNew);
     genesis.vtx[0].nTime = 1498944188;
