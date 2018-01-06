@@ -204,8 +204,8 @@ void SendCoinsDialog::on_sendButton_clicked()
         if(entry->validate())
         {
             SendCoinsRecipient recipient = entry->getValue();
-            CAmount nAmount = recipient.amount;
-            double nId = rand() % pindexBestHeader->GetMedianTimePast();
+            recipients.append(recipient);
+            valid = true;
         }
         else
         {
