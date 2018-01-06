@@ -492,7 +492,7 @@ std::string HelpMessage(HelpMessageMode mode)
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/kekcoindev/kekcoin-core>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/Kekcoin-Core/kekcoin-segwit>";
     const std::string URL_WEBSITE = "<https://kekcoin.org>";
     // todo: remove urls from translations on next change
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2009, COPYRIGHT_YEAR) + " ") + "\n" +
