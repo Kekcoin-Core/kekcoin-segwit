@@ -105,9 +105,6 @@ using namespace std;
 const char * const KEKCOIN_CONF_FILENAME = "kekcoin.conf";
 const char * const KEKCOIN_PID_FILENAME = "kekcoin.pid";
 
-std::vector<std::string> vAddedAnonServers;
-CCriticalSection cs_vAddedAnonServers;
-
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
 bool fDebug = false;
@@ -549,12 +546,6 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
         // Don't overwrite existing settings so command line settings override kekcoin.conf
         string strKey = string("-") + it->string_key;
         string strValue = it->value[0];
-
-        if(strKey == "-addanonserver")
-        {
-            vAddedAnonServers.push_back(strValue);
-            continue;
-        }
 
         if(strKey == "-votewitness")
         {
