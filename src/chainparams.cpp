@@ -162,7 +162,7 @@ public:
       	vSeeds.clear();
 
         vSeeds.push_back(CDNSSeedData("139.59.165.143", "139.59.165.143"));
-        vSeeds.push_back(CDNSSeedData("188.166.173.73", "188.166.173.73"));
+        vSeeds.push_back(CDNSSeedData("209.250.246.178", "209.250.246.178"));
         vSeeds.push_back(CDNSSeedData("209.250.246.85", "209.250.246.85"));
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
@@ -177,7 +177,10 @@ public:
             boost::assign::map_list_of
             ( 0,   uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949"))  //Genesis
             (100,   uint256S("0x863e40bbb850df57a5e18c329ce11e04c28aba71dfc61cd1c608dc89239f1014")) //Last PoW
-            (101,   uint256S("0x29a21bdb6d93749f25391bd89c433ae1821dfff52678687ce54ace373c1096e8")),//First PoS
+            (101,   uint256S("0x29a21bdb6d93749f25391bd89c433ae1821dfff52678687ce54ace373c1096e8")) //First PoS
+            (50000, uint256S("0xebe59c2e44915d529fde3f95d988d6c4ae33dcfa27033bfb968ab603cf49f917"))
+            (100000, uint256S("0xeaf927f121118b1d8e3dd3473c0c3d4156b2f540f810f53bd355167057167f77"))
+            (150000, uint256S("0x56024e57b3a0166b63178bf24f9bf8f674f746526c0793a81ea8d8b004e376c4")),
             1500672704, // * UNIX timestamp of last checkpoint block
             0,          // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
