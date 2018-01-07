@@ -13,7 +13,7 @@
  * for both kekcoind and kekcoin-core, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("KekCoin");
+const std::string CLIENT_NAME("Kekcoin");
 
 /**
  * Client version number
