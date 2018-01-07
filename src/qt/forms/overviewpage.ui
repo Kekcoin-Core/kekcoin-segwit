@@ -1048,7 +1048,7 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: #452f6a</string>
+        <string notr="true">color: #727272</string>
        </property>
        <property name="text">
         <string>Connecting to KekCoin network...</string>
@@ -1075,7 +1075,7 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: #2922a8</string>
+        <string notr="true">color: #dcc500</string>
        </property>
        <property name="text">
         <string>32 active connections.</string>
@@ -1099,7 +1099,7 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: #452f6a</string>
+        <string notr="true">color: #727272</string>
        </property>
        <property name="text">
         <string>Last block: 800000</string>
