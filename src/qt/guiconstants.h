@@ -52,9 +52,9 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "KekCoin"
-#define QAPP_ORG_DOMAIN "kekcoin.org"
-#define QAPP_APP_NAME_DEFAULT "KekCoin-Qt"
-#define QAPP_APP_NAME_TESTNET "KekCoin-Qt-testnet"
+#define QAPP_ORG_NAME "Kekcoin"
+#define QAPP_ORG_DOMAIN "kekcoin.co"
+#define QAPP_APP_NAME_DEFAULT "Kekcoin-Qt"
+#define QAPP_APP_NAME_TESTNET "Kekcoin-Qt-testnet"
 
 #endif // KEKCOIN_QT_GUICONSTANTS_H
