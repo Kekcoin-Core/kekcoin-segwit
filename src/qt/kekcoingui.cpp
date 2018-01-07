@@ -1594,7 +1594,7 @@ void KekCoinGUI::updatePrice()
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();
   config.setProtocol(QSsl::TlsV1_2);
   request.setSslConfiguration(config);
-  request.setUrl(QUrl("https://api.coinmarketcap.com/v1/ticker/nav-coin/?convert=EUR"));
+  request.setUrl(QUrl("https://api.coinmarketcap.com/v1/ticker/kekcoin/?convert=EUR"));
   request.setHeader(QNetworkRequest::ServerHeader, "application/json");
   reply = manager->get(request);
   connect(manager, SIGNAL(finished(QNetworkReply*)), this,
@@ -1604,7 +1604,7 @@ void KekCoinGUI::updatePrice()
 void KekCoinGUI::replyFinished(QNetworkReply *reply)
 {
 
-  QString reqString = QString("GET /v1/ticker/nav-coin/?convert=EUR HTTP/1.1\r\n" \
+  QString reqString = QString("GET /v1/ticker/kekcoin/?convert=EUR HTTP/1.1\r\n" \
                               "Host: api.coinmarketcap.com\r\n\r\n");
 
   QString strReply = reply->readAll();
