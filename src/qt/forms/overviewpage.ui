@@ -118,7 +118,7 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: #616998; text-transform: uppercase; font-size: 16px</string>
+            <string notr="true">color: #dcc500; text-transform: uppercase; font-size: 16px</string>
            </property>
            <property name="text">
             <string>Balance</string>
@@ -540,7 +540,7 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: #616998; text-transform: uppercase; font-size: 16px</string>
+            <string notr="true">color: #dcc500; text-transform: uppercase; font-size: 16px</string>
            </property>
            <property name="text">
             <string>Staking</string>
@@ -833,7 +833,7 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: #616998;  font-size: 13px; margin-top:6px</string>
+          <string notr="true">color: #dcc500;  font-size: 13px; margin-top:6px</string>
          </property>
          <property name="text">
           <string/>
@@ -864,7 +864,7 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: #616998;  font-size: 13px; margin-top:6px</string>
+          <string notr="true">color: #dcc500;  font-size: 13px; margin-top:6px</string>
          </property>
          <property name="text">
           <string/>
@@ -943,7 +943,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">color: #616998; text-transform: uppercase; font-size: 16px;</string>
+              <string notr="true">color: #dcc500; text-transform: uppercase; font-size: 16px;</string>
              </property>
              <property name="text">
               <string>Transactions</string>
