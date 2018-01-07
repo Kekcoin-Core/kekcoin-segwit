@@ -72,8 +72,8 @@ void OptionsModel::Init(bool resetSettings)
     nDisplayUnit = settings.value("nDisplayUnit").toInt();
 
     if (!settings.contains("strThirdPartyTxUrls"))
-        settings.setValue("strThirdPartyTxUrls", "https://chainz.cryptoid.info/nav/tx.dws?%s.htm");
-    strThirdPartyTxUrls = settings.value("strThirdPartyTxUrls", "https://chainz.cryptoid.info/nav/tx.dws?%s.htm").toString();
+        settings.setValue("strThirdPartyTxUrls", "http://explorer.kekcoin.co/tx/%s");
+    strThirdPartyTxUrls = settings.value("strThirdPartyTxUrls", "http://explorer.kekcoin.co/tx/%s").toString();
 
     if (!settings.contains("fCoinControlFeatures"))
         settings.setValue("fCoinControlFeatures", false);
