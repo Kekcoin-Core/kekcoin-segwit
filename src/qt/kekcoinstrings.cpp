@@ -9,7 +9,7 @@
 #define UNUSED
 #endif
 static const char UNUSED *kekcoin_strings[] = {
-QT_TRANSLATE_NOOP("kekcoin-core", "KekCoin Core"),
+QT_TRANSLATE_NOOP("kekcoin-core", "Kekcoin Core"),
 QT_TRANSLATE_NOOP("kekcoin-core", "The %s developers"),
 QT_TRANSLATE_NOOP("kekcoin-core", ""
 "(1 = keep tx meta data e.g. account owner and payment request information, 2 "

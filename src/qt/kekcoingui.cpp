@@ -957,7 +957,7 @@ void KekCoinGUI::setNumConnections(int count)
     default: icon = ":/icons/connect_4"; break;
     }
     labelConnectionsIcon->setPixmap(platformStyle->SingleColorIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to KekCoin network", "", count));
+    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Kekcoin network", "", count));
     if(walletFrame){
         walletFrame->setStatusTitleConnections(tr("%n active connections.","",count));
         if(count > 0)
@@ -1041,7 +1041,7 @@ void KekCoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVer
         progressBarLabel->setVisible(false);
         progressBar->setVisible(false);
         if(walletFrame)
-            walletFrame->setStatusTitle(tr("Connected to KekCoin network."));
+            walletFrame->setStatusTitle(tr("Connected to Kekcoin network."));
     }
     else
     {
@@ -1053,7 +1053,7 @@ void KekCoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVer
         const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
 
         if(walletFrame)
-            walletFrame->setStatusTitle(tr("Connecting to KekCoin network..."));
+            walletFrame->setStatusTitle(tr("Connecting to Kekcoin network..."));
 
         if(secs < 2*DAY_IN_SECONDS)
         {
