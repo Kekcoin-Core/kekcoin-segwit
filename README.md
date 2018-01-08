@@ -1,7 +1,5 @@
 This is the working repository for Kekcoin 2.0.0, our fork of bitcoin-core 0.13.
 
-**Not all functionality is production ready, use at your own risk.**
-
 For more information please visit the website:
 
 http://www.kekcoin.co
