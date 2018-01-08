@@ -161,7 +161,7 @@ public:
         vFixedSeeds.clear();
       	vSeeds.clear();
 
-        vSeeds.push_back(CDNSSeedData("139.59.165.143", "139.59.165.143"));
+        vSeeds.push_back(CDNSSeedData("107.191.48.186", "107.191.48.186"));
         vSeeds.push_back(CDNSSeedData("209.250.246.178", "209.250.246.178"));
         vSeeds.push_back(CDNSSeedData("209.250.246.85", "209.250.246.85"));
 
