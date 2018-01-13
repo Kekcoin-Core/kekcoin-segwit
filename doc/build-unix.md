@@ -14,6 +14,8 @@ for example, when specifying the path of the dependency:
 Here BDB_PREFIX must be an absolute path - it is defined using $(pwd) which ensures
 the usage of the absolute path.
 
+When building kekcoind on Unix or ARM please note that to use sudo apt-get install libdb++-dev for BerkleyDB you need to call ./configure with the flag --with-incompatible-bdb.
+
 To Build
 ---------------------
 
