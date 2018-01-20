@@ -7843,7 +7843,7 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
     //     return false;
     //}
 
-    //Stake minimum age requirement replaced with depth requirement:    
+    // Stake minimum age requirement replaced with depth requirement:    
     CCoinsViewCache inputs(pcoinsTip);
     const CCoins* coins = inputs.AccessCoins(prevout.hash);
     assert(coins);
@@ -7852,12 +7852,12 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
 
     if (nSpendHeight - coins->nHeight < nStakeMinConfirmations - 1  && nSpendHeight - coins->nHeight > 0)
     {
-	LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
-        return false;
+    	LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
+            return false;
     }
+   
     if (pBlockTime)
         *pBlockTime = pblockindex->GetBlockTime();
-
 
     if (!pwalletMain->mapWallet.count(prevout.hash))
         return("CheckProofOfStake(): Couldn't get Tx Index");
