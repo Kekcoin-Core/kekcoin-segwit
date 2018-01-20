@@ -1195,6 +1195,10 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (!CheckFinalTx(tx, STANDARD_LOCKTIME_VERIFY_FLAGS))
         return state.DoS(0, false, REJECT_NONSTANDARD, "non-final");
 
+    // For the same reasons as in the case with non-final transactions
+    if (tx.nTime > FutureDrift(GetAdjustedTime()))
+        return state.DoS(0, false, REJECT_NONSTANDARD, "time-too-new");
+
     // is it already in the memory pool?
     if (pool.exists(hash))
         return state.Invalid(false, REJECT_ALREADY_KNOWN, "txn-already-in-mempool");
@@ -2123,7 +2127,7 @@ bool CheckInputs(const CTransaction& tx, CValidationState &state, const CCoinsVi
                     CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
 
                     // ppcoin: check transaction timestamp
-                    if (txPrev.nTime > tx.nTime && pblockindex->nHeight > 1294597)
+                    if (txPrev.nTime > tx.nTime)
                         return state.DoS(100, false, REJECT_INVALID, "tx-timestamp-earlier-as-output");
                 }
 
@@ -3777,6 +3781,10 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const 
     if (fCheckPOW && !CheckProofOfWork(block.GetHash(), block.nBits, consensusParams) && pblock.IsProofOfWork() )
         return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
 
+    // Check timestamp
+    if (block.GetBlockTime() > FutureDrift(GetAdjustedTime()))
+        return state.Invalid(error("CheckBlockHeader(): block timestamp too far in the future"), REJECT_INVALID, "time-too-new");
+
     return true;
 }
 
@@ -3838,6 +3846,14 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     for (unsigned int i = 1; i < block.vtx.size(); i++)
         if (block.vtx[i].IsCoinBase())
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-multiple", false, "more than one coinbase");
+
+    // Check coinbase timestamp
+    if (block.GetBlockTime() > FutureDrift(block.vtx[0].nTime))
+            return state.DoS(25, error("CheckBlock(): coinbase timestamp is too early"), REJECT_INVALID, "bad-cb-time");
+
+    // Check coinstake timestamp
+    if (block.IsProofOfStake() && !CheckCoinStakeTimestamp(block.GetBlockTime(), block.vtx[1].nTime))
+            return state.DoS(50, error("CheckBlock(): coinstake timestamp violation nTimeBlock=%d nTimeTx=%u", block.GetBlockTime(), block.vtx[1].nTime), REJECT_INVALID, "bad-cs-time");
 
     // Check proof-of-stake block signature
     if (fCheckSig && !CheckBlockSignature(block))
