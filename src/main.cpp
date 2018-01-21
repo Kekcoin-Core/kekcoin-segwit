@@ -1195,6 +1195,10 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (!CheckFinalTx(tx, STANDARD_LOCKTIME_VERIFY_FLAGS))
         return state.DoS(0, false, REJECT_NONSTANDARD, "non-final");
 
+    // For the same reasons as in the case with non-final transactions
+    if (tx.nTime > FutureDrift(GetAdjustedTime()))
+        return state.DoS(0, false, REJECT_NONSTANDARD, "time-too-new");
+
     // is it already in the memory pool?
     if (pool.exists(hash))
         return state.Invalid(false, REJECT_ALREADY_KNOWN, "txn-already-in-mempool");
@@ -2120,10 +2124,8 @@ bool CheckInputs(const CTransaction& tx, CValidationState &state, const CCoinsVi
                    valid = 0;
 
                 if(valid){ // prev out is already checked in CheckTxInputs
-                    CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
-
                     // ppcoin: check transaction timestamp
-                    if (txPrev.nTime > tx.nTime && pblockindex->nHeight > 1294597)
+                    if (txPrev.nTime > tx.nTime)
                         return state.DoS(100, false, REJECT_INVALID, "tx-timestamp-earlier-as-output");
                 }
 
@@ -3777,6 +3779,10 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const 
     if (fCheckPOW && !CheckProofOfWork(block.GetHash(), block.nBits, consensusParams) && pblock.IsProofOfWork() )
         return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
 
+    // Check timestamp
+    if (block.GetBlockTime() > FutureDrift(GetAdjustedTime()))
+        return state.Invalid(error("CheckBlockHeader(): block timestamp too far in the future"), REJECT_INVALID, "time-too-new");
+
     return true;
 }
 
@@ -3838,6 +3844,14 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     for (unsigned int i = 1; i < block.vtx.size(); i++)
         if (block.vtx[i].IsCoinBase())
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-multiple", false, "more than one coinbase");
+
+    // Check coinbase timestamp
+    if (block.GetBlockTime() > FutureDrift(block.vtx[0].nTime))
+            return state.DoS(25, error("CheckBlock(): coinbase timestamp is too early"), REJECT_INVALID, "bad-cb-time");
+
+    // Check coinstake timestamp
+    if (block.IsProofOfStake() && !CheckCoinStakeTimestamp(block.GetBlockTime(), block.vtx[1].nTime))
+            return state.DoS(50, error("CheckBlock(): coinstake timestamp violation nTimeBlock=%d nTimeTx=%u", block.GetBlockTime(), block.vtx[1].nTime), REJECT_INVALID, "bad-cs-time");
 
     // Check proof-of-stake block signature
     if (fCheckSig && !CheckBlockSignature(block))
@@ -4016,7 +4030,7 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
         return state.DoS(10, false, REJECT_INVALID, "check-pow-height", "pow-mined blocks not allowed");
 
     // Check CheckCoinStakeTimestamp
-    if (block.IsProofOfStake() && !CheckCoinStakeTimestamp(nHeight, block.GetBlockTime(), (int64_t)block.vtx[1].nTime))
+    if (block.IsProofOfStake() && !CheckCoinStakeTimestamp(block.GetBlockTime(), (int64_t)block.vtx[1].nTime))
         return state.Invalid(false, REJECT_INVALID, "check-coinstake-timestamp", "coinstake timestamp violation");
 
     int64_t nLockTimeCutoff = (nLockTimeFlags & LOCKTIME_MEDIAN_TIME_PAST)
@@ -7799,12 +7813,9 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
 }
 
 // Check whether the coinstake timestamp meets protocol
-bool CheckCoinStakeTimestamp(int nHeight, int64_t nTimeBlock, int64_t nTimeTx)
+bool CheckCoinStakeTimestamp(int64_t nTimeBlock, int64_t nTimeTx)
 {
-    if (nHeight > 0)
-        return (nTimeBlock == nTimeTx) && ((nTimeTx & STAKE_TIMESTAMP_MASK) == 0);
-    else
-        return (nTimeBlock == nTimeTx);
+    return (nTimeBlock == nTimeTx) && ((nTimeTx & STAKE_TIMESTAMP_MASK) == 0);
 }
 
 bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, const COutPoint& prevout, int64_t* pBlockTime)
@@ -7830,7 +7841,7 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
     //     return false;
     //}
 
-    //Stake minimum age requirement replaced with depth requirement:    
+    // Stake minimum age requirement replaced with depth requirement:    
     CCoinsViewCache inputs(pcoinsTip);
     const CCoins* coins = inputs.AccessCoins(prevout.hash);
     assert(coins);
@@ -7839,12 +7850,12 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
 
     if (nSpendHeight - coins->nHeight < nStakeMinConfirmations - 1  && nSpendHeight - coins->nHeight > 0)
     {
-	LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
-        return false;
+    	LogPrintf("CheckProofOfStake(): tried to stake at depth %d", nSpendHeight - coins->nHeight);
+            return false;
     }
+   
     if (pBlockTime)
         *pBlockTime = pblockindex->GetBlockTime();
-
 
     if (!pwalletMain->mapWallet.count(prevout.hash))
         return("CheckProofOfStake(): Couldn't get Tx Index");
