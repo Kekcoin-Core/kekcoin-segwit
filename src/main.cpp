@@ -4241,6 +4241,21 @@ bool ProcessNewBlock(CValidationState& state, const CChainParams& chainparams, C
         bool fRequested = MarkBlockAsReceived(pblock->GetHash());
         fRequested |= fForceProcessing;
 
+        if (pblock->hashPrevBlock != hashBestChain)
+        {
+            // Extra checks to prevent "fill up memory by spamming with bogus blocks"
+            //const CBlockIndex* pcheckpoint = Checkpoints::AutoSelectSyncCheckpoint();
+            CBlockIndex* pcheckpoint = Checkpoints::GetLastCheckpoint(chainparams.Checkpoints());
+            int64_t deltaTime = pblock->GetBlockTime() - pcheckpoint->nTime;
+            if (deltaTime < 0)
+            {
+                if (pfrom)
+                    //pfrom->Misbehaving(1);
+                    Misbehaving(pfrom->GetId(), 1);
+                return error("ProcessBlock() : block with timestamp before last checkpoint");
+            }
+        }
+
         // Store to disk
         CBlockIndex *pindex = NULL;
         bool fNewBlock = false;
