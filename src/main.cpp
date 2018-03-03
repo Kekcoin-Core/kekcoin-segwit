@@ -4243,7 +4243,7 @@ bool ProcessNewBlock(CValidationState& state, const CChainParams& chainparams, C
 
         if (pblock->hashPrevBlock != hashBestChain)
         {
-            // Extra checks to prevent "fill up memory by spamming with bogus blocks"
+            //Extra checks to prevent "fill up memory by spamming with bogus blocks"
             const CBlockIndex* pcheckpoint = Checkpoints::AutoSelectSyncCheckpoint();
             int64_t deltaTime = pblock->GetBlockTime() - pcheckpoint->nTime;
             if (deltaTime < 0)

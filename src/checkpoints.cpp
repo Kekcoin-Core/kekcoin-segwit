@@ -84,10 +84,11 @@ namespace Checkpoints {
     // Automatically select a suitable sync-checkpoint
     const CBlockIndex* AutoSelectSyncCheckpoint()
     {
-        const CBlockIndex *pindex = pindexBestHeader;
+        const CBlockIndex *pindex = chainActive.Tip();
         // Search backward for a block within max span and maturity window
-        while (pindex->pprev && pindex->nHeight + nCheckpointSpan > pindexBestHeader->nHeight)
+        while (pindex->pprev && pindex->nHeight + nCheckpointSpan > chainActive.Tip()->nHeight)
             pindex = pindex->pprev;
+        LogPrintf("RETURN pindex->nHeight: %d", pindex->nHeight);
         return pindex;
     }
 
