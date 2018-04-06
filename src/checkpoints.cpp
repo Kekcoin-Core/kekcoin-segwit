@@ -88,7 +88,7 @@ namespace Checkpoints {
         // Search backward for a block within max span and maturity window
         while (pindex->pprev && pindex->nHeight + nCheckpointSpan > chainActive.Tip()->nHeight)
             pindex = pindex->pprev;
-        LogPrintf("RETURN pindex->nHeight: %d", pindex->nHeight);
+
         return pindex;
     }
 
