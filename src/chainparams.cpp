@@ -113,7 +113,7 @@ public:
         consensus.BIP34Height = 0;
         consensus.BIP34Hash = uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949");
         consensus.powLimit = ArithToUint256(~arith_uint256(0) >> 20);
-        consensus.nPowTargetTimespan = 60; // two weeks
+        consensus.nPowTargetTimespan = 22 * 60; // 12.5 mins
         consensus.nPowTargetSpacing = 60;
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
@@ -148,7 +148,6 @@ public:
 
         genesis = CreateGenesisBlock(1498944188, 922517, 0x1e0fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-
         assert(consensus.hashGenesisBlock == uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949"));
         assert(genesis.hashMerkleRoot == uint256S("0x833c5ee04faab2268a87d8d0a41e96ccb514068a66c7e74322315322f4f149d0"));
 
@@ -175,7 +174,7 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0,   uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949"))  //Genesis
+            ( 0,   uint256S("0x0000091bc0f9d1578c7979142b2ff70e6bf8ff7c388cf3dcb486cf19a7518949"))  //Genesis            
             (100,   uint256S("0x863e40bbb850df57a5e18c329ce11e04c28aba71dfc61cd1c608dc89239f1014")) //Last PoW
             (101,   uint256S("0x29a21bdb6d93749f25391bd89c433ae1821dfff52678687ce54ace373c1096e8")) //First PoS
             (50000, uint256S("0xebe59c2e44915d529fde3f95d988d6c4ae33dcfa27033bfb968ab603cf49f917"))
@@ -262,7 +261,11 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0, uint256S("0x0000c7b67a057053c5043fad3ae7896f3d3172361ba4a850abb24f6dd80df5dc"))
+            ( 0, uint256S("0x0000c7b67a057053c5043fad3ae7896f3d3172361ba4a850abb24f6dd80df5dc")),
+            1498944188, // * UNIX timestamp of last checkpoint block
+            0,          // * total number of transactions between genesis and last checkpoint
+                        //   (the tx=... number in the SetBestChain debug.log lines)
+            3500        // * estimated number of transactions per day after checkpoint
         };
 
     }
@@ -282,7 +285,7 @@ public:
         consensus.BIP34Height = -1; // BIP34 has not necessarily activated on regtest
         consensus.BIP34Hash = uint256();
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+        consensus.nPowTargetTimespan = 22 * 60; // two weeks
         consensus.nPowTargetSpacing = 10 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
