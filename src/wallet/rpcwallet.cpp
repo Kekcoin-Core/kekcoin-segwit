@@ -2664,15 +2664,15 @@ vStakePeriodRange_T PrepareRangeForStakeReport()
     vStakePeriodRange_T aRange;
     StakePeriodRange_T x;
 
-    struct tm Loc_MidNight;
 
     int64_t n1Hour = 60*60;
     int64_t n1Day = 24 * n1Hour;
 
     int64_t nToday = GetTime();
     time_t CurTime = nToday;
+    auto localTime = boost::posix_time::second_clock::local_time();
+    struct tm Loc_MidNight = boost::posix_time::to_tm(localTime);
 
-    localtime_r(&CurTime, &Loc_MidNight);
     Loc_MidNight.tm_hour = 0;
     Loc_MidNight.tm_min = 0;
     Loc_MidNight.tm_sec = 0;  // set midnight
@@ -2696,12 +2696,12 @@ vStakePeriodRange_T PrepareRangeForStakeReport()
     }
 
     // prepare subtotal range of last 24H, 1 week, 30 days, 1 years
-    int GroupDays[4][2] = { {1 ,0}, {7 ,0 }, {30, 0}, {365, 0}};
-    std::string sGroupName[] = {"24H", "7 Days", "30 Days", "365 Days" };
+    int GroupDays[5][2] = { {1, 0}, {7, 0}, {30, 0}, {365, 0}, {99999999, 0}};
+    std::string sGroupName[] = {"24H", "7 Days", "30 Days", "365 Days", "All" };
 
     nToday = GetTime();
 
-    for(int i=0; i<4; i++)
+    for(int i=0; i<5; i++)
     {
         x.Start = nToday - GroupDays[i][0] * n1Day;
         x.End   = nToday - GroupDays[i][1] * n1Day;
@@ -2716,8 +2716,7 @@ vStakePeriodRange_T PrepareRangeForStakeReport()
     x.Name = "Latest Stake";
     aRange.push_back(x);
 
-
-return aRange;
+    return aRange;
 }
 
 

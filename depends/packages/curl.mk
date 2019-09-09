@@ -1,8 +1,8 @@
 package=curl
-$(package)_version=7.53.1
+$(package)_version=7.64.1
 $(package)_download_path=https://curl.haxx.se/download/
-$(package)_file_name=$(package)-$($(package)_version).tar.gz
-$(package)_sha256_hash=64f9b7ec82372edb8eaeded0a9cfa62334d8f98abc65487da01188259392911d
+$(package)_file_name=$(package)-$($(package)_version).tar.xz
+$(package)_sha256_hash=9252332a7f871ce37bfa7f78bdd0a0e3924d8187cc27cb57c76c9474a7168fb3
 $(package)_dependencies=openssl
 $(package)_patches=fix_lib_order.patch
 
@@ -11,11 +11,11 @@ define $(package)_preprocess_cmds
 endef
 
 define $(package)_set_vars
-  $(package)_config_env=CURL_CFLAG_EXTRAS="-DBUILDING_LIBCURL" 
-  $(package)_config_opts=--with-ssl=$(host_prefix)/lib
-  $(package)_config_opts_mingw32=--with-random=/dev/urandom --enable-static --disable-shared
-  $(package)_config_opts_x86_64_mingw32=mingw64
-  $(package)_config_opts_i686_mingw32=mingw32
+  $(package)_config_env=CURL_CFLAG_EXTRAS="-DBUILDING_LIBCURL"
+  $(package)_config_opts=--with-ssl=$(host_prefix) --enable-static --disable-shared --without-libidn2 --with-pic
+  $(package)_config_opts_mingw32=--with-random=/dev/urandom
+  $(package)_config_opts_x86_64_mingw32=--target=x86_64-w64-mingw32
+  $(package)_config_opts_i686_mingw32=--target=i686-w64-mingw32
 endef
 
 define $(package)_config_cmds
