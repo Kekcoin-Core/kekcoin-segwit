@@ -16,6 +16,6 @@ For more information please visit the website: http://www.kekcoin.io
 | Site | link |
 |:-----------|:-----------|
 | Bitcointalk | https://bitcointalk.org/index.php?topic=2026344.0 |
-| Twitter | https://twitter.com/KekCore |
+| Twitter | https://twitter.com/KekcoinCore |
 | Reddit | http://www.reddit.com/r/KekcoinOfficial |
 | Telegram | https://t.me/KekcoinOfficial |
