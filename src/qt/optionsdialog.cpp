@@ -114,7 +114,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
         }
     }
-    ui->thirdPartyTxUrls->setPlaceholderText("http://explorer.kekcoin.co/tx/%s");
+    ui->thirdPartyTxUrls->setPlaceholderText("http://explorer.kekcoin.io/tx/%s");
 
     ui->unit->setModel(new KekCoinUnits(this));
 

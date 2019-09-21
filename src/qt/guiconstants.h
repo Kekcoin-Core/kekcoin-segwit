@@ -53,7 +53,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "Kekcoin"
-#define QAPP_ORG_DOMAIN "kekcoin.co"
+#define QAPP_ORG_DOMAIN "kekcoin.io"
 #define QAPP_APP_NAME_DEFAULT "Kekcoin-Qt"
 #define QAPP_APP_NAME_TESTNET "Kekcoin-Qt-testnet"
 
